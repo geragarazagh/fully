@@ -1,0 +1,11 @@
+.DS_Store
+Fully.app
+Fully.zip
+vendor/Sparkle.framework
+*.dmg
+.release
+appcast.xml
+test/
+*.mp4
+*.mov
+site/
