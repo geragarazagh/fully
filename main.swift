@@ -11,6 +11,7 @@ import ApplicationServices
 startInBackgroundIfAtLogin()
 // A fresh copy asked by the running app whether the grant is there now (see App.tryTap).
 if CommandLine.arguments.contains("--has-access") { exit(AXIsProcessTrusted() ? 0 : 1) }
+_ = MainActor.assumeIsolated { runFullyCLI(CommandLine.arguments) }
 
 // MARK: Accessibility helpers
 
