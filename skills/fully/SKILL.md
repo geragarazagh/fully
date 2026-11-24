@@ -11,18 +11,19 @@ Checks Fully's setup and fills any window cleanly to the screen's visible frame 
 
 ## Locate the CLI
 
-Check in order; use the first that exits 0:
+Check in order; use the first that exits 0. Use `--help`, never `--version`, and read the app's version from its Info.plist before running its binary: Fully before 0.2 has no command line at all, so it takes every flag (`--help` and `--version` alike) as a plain start and opens its window instead of failing.
 
 ```sh
-fully-cli --version
-/Applications/Fully.app/Contents/MacOS/Fully --version
+fully-cli --help
+defaults read /Applications/Fully.app/Contents/Info CFBundleShortVersionString
+/Applications/Fully.app/Contents/MacOS/Fully --help
 ```
 
-If neither exists, tell the user how to install it (`brew install geragarazagh/tap/fully`) and stop.
+`fully-cli` exists only in versions that have the command line, so it is safe to try first. Run the third line only if the second prints 0.2 or newer; if it prints an older version, tell the user once to update Fully (Check for Updates in its menu, or `brew upgrade --cask geragarazagh/tap/fully`) and stop. If none works, tell the user how to install it (`brew install geragarazagh/tap/fully`) and stop.
 
 ## Common tasks
 
-1. **Check status** (running state, Accessibility permission, and whether macOS's built-in title-bar double-click is set to `None`):
+1. **Check status** (running state, this terminal's Accessibility grant as `terminalAccessibility`, which is the grant `fill` uses and not Fully's own, and whether macOS's built-in title-bar double-click is set to `None`; Fully's own grant is only visible in System Settings > Privacy & Security > Accessibility):
    ```sh
    fully-cli status --json
    ```

@@ -1,7 +1,7 @@
 // Command line interface for Fully: inspect Accessibility / macOS double-click state, or fill a window to visibleFrame without tiling.
 // Run as fully-cli (symlink to Fully.app/Contents/MacOS/Fully) or as Fully with subcommands:
 //
-//   fully-cli status [--json]      prints version, running state, Accessibility grant and macOS double-click setting
+//   fully-cli status [--json]      prints version, running state, this terminal's Accessibility grant and macOS double-click setting
 //   fully-cli fill [APP_NAME]      fills the frontmost (or named) app's focused window to the screen's visible frame
 //   fully-cli --version | --help
 
@@ -55,7 +55,7 @@ private func fmtRect(_ r: CGRect?) -> String {
     let named = URL(fileURLWithPath: rawArgs[0]).lastPathComponent != exe
     let rest = Array(rawArgs.dropFirst())
     let usage = """
-    Usage: \(fullyCliName) status [--json]      prints version, running state, Accessibility and macOS double-click setting
+    Usage: \(fullyCliName) status [--json]      prints version, running state, this terminal's Accessibility and macOS double-click setting
            \(fullyCliName) fill [APP_NAME]      fills the frontmost or named app's focused window to visibleFrame
            \(fullyCliName) --version | --help
     """
@@ -88,6 +88,9 @@ private func fmtRect(_ r: CGRect?) -> String {
         guard tail.isEmpty || json else { fuFail(usage) }
         let version = fuAppBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
         let running = fuRunning()
+        // The grant of the terminal running this command (the one `fill` uses), not Fully's: macOS credits a child of a
+        // terminal to the terminal (its responsible process), and the running app has no control channel to ask. Said so in
+        // the name and the text, so an agent never reads "yes" as "the double-click works" (2026-11-24: the key was called accessibility).
         let access = AXIsProcessTrusted()
         CFPreferencesAppSynchronize(kCFPreferencesAnyApplication)
         let raw = CFPreferencesCopyAppValue("AppleActionOnDoubleClick" as CFString, kCFPreferencesAnyApplication) as? String ?? "Maximize"
@@ -96,14 +99,14 @@ private func fmtRect(_ r: CGRect?) -> String {
             fuJSON([
                 "version": version,
                 "running": running,
-                "accessibility": access,
+                "terminalAccessibility": access,
                 "macOSDoubleClick": raw,
                 "macOSDoubleClickReady": ok,
             ])
         }
         print("version: \(version)")
         print("running: \(running ? "yes" : "no")")
-        print("accessibility: \(access ? "yes" : "no")")
+        print("terminalAccessibility: \(access ? "yes" : "no") (this terminal's grant, not Fully's; Fully's is in System Settings > Privacy & Security > Accessibility, on macOS 27 «Device Control and Data Access»)")
         print("macOSDoubleClick: \(raw)\(ok ? " (ok)" : " (set to None/Do Nothing/No Action in System Settings)")")
         exit(0)
 
