@@ -4,10 +4,6 @@
 
 Window maximizer for Mac. A double-click on the title bar fills the screen with the window, and the window keeps that size when dragged.
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="docs/scene.webp"><img src="docs/scene-light.webp" alt="Preview showing Charles Minard’s 1869 map of Napoleon’s Russian campaign at its own size, the pointer on the window’s empty title bar"></picture>
-
-<picture><source media="(prefers-color-scheme: dark)" srcset="docs/scene-after.webp"><img src="docs/scene-after-light.webp" alt="The same Preview window after a double-click on its title bar, filling the screen"></picture>
-
 Apple silicon, macOS 13 or later.
 
 ## Install
