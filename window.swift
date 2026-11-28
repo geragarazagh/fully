@@ -66,6 +66,9 @@ final class AppIconView: NSImageView {
     let panel: NSPanel
     let loginSwitch = NSSwitch()
     var onShow: (() -> Void)?
+    // The token addLocalMonitorForEvents returns is the monitor itself: dropped, it lives on unowned and `leaks` reports
+    // it (_NSLocalEventObserver, stress matrix 2026-11-27). Kept for the life of the window, which is the app's.
+    private var keyMonitor: Any?
 
     init(name: String, github: String, extra: DoubleClickRow) {
         self.name = name
@@ -77,7 +80,7 @@ final class AppIconView: NSImageView {
         super.init()
         build()
         _ = Updates.shared   // starts the daily check
-        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] e in
+        keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] e in
             guard let self, e.window === self.panel else { return e }
             let f = e.modifierFlags.intersection([.command, .option, .control, .shift])
             if e.keyCode == 53 && f.isEmpty || e.charactersIgnoringModifiers == "w" && f == .command { self.panel.performClose(nil); return nil }
