@@ -7,7 +7,7 @@
 set -e
 cd "${0:A:h}"
 # It changes per release, not per build.
-version=0.2 min=13.0 id=com.geragaraza.fully name=Fully
+version=0.3 min=13.0 id=com.geragaraza.fully name=Fully
 app=$name.app
 [ -n "$TRACE" ] && [ -n "$SIGN_ID" ] && { echo "A TRACE build is not signed with a Developer ID"; exit 1; }
 xc=${XCODE_CONTENTS:-/Applications/Xcode.app/Contents}
